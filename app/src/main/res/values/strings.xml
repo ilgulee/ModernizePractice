@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">Modernize Practice</string>
+    <string name="button_coupe">Coupe</string>
+    <string name="button_minivan">Minivan</string>
+    <string name="button_bike">Bike</string>
+    <string name="button_sedan">Sedan</string>
+    <string name="button_suv">Suv</string>
+    <string name="button_boat">Boat</string>
+    <string name="button_van">Van</string>
+    <string name="button_truck">Truck</string>
+    <string name="button_other">Other</string>
+    <string name="edit_text_maker">MAKER:</string>
+    <string name="edit_text_model">MODEL:</string>
+    <string name="button_save">Save</string>
+    <string name="edit_text_hint_maker">Toyota</string>
+    <string name="edit_text_hint_model">Crwon</string>
+
+
+</resources>
