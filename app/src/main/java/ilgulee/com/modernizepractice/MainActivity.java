@@ -4,8 +4,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.ListView;
 
 import java.util.ArrayList;
 
@@ -13,20 +14,22 @@ public class MainActivity extends AppCompatActivity {
     final public static int FORM_REQUEST_CODE = 1;
     final public static String KEY_AUTOMOBILE = "key_automobile";
     final public static String SAVE_STATE_KEY = "key_saved_instance_state";
-    private ListView mListView;
-    private AutomobileAdapter mAutomobileAdapter;
+    private RecyclerView mRecyclerView;
+    private AutomobileRecyclerAdapter mAdapter;
     private ArrayList<Automobile> automobiles = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mListView = findViewById(R.id.list);
-        mAutomobileAdapter = new AutomobileAdapter();
-        mListView.setAdapter(mAutomobileAdapter);
+        mRecyclerView = findViewById(R.id.recyclerview);
+        mAdapter = new AutomobileRecyclerAdapter();
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mRecyclerView.setAdapter(mAdapter);
+
         if (savedInstanceState != null) {
             this.automobiles = savedInstanceState.getParcelableArrayList(SAVE_STATE_KEY);
-            mAutomobileAdapter.updateData(this.automobiles);
+            mAdapter.updateData(this.automobiles);
         }
     }
     public void onClick(View view){
@@ -46,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void addAutomobileToList(Automobile automobile) {
         automobiles.add(automobile);
-        mAutomobileAdapter.addAutomobile(automobile);
+        mAdapter.addAutomobile(automobile);
     }
 
     @Override
