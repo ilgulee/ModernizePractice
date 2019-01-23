@@ -2,8 +2,6 @@ package ilgulee.com.modernizepractice
 
 import android.app.Activity
 import android.arch.lifecycle.Lifecycle
-import android.arch.lifecycle.LifecycleObserver
-import android.arch.lifecycle.OnLifecycleEvent
 import android.content.Context
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -13,19 +11,14 @@ import android.widget.Button
 import android.widget.TextView
 import ilgulee.com.modernizepractice.room.AutomobileDatabase
 
-class AutomobileRecyclerAdapter(private val context: Context, val lifecycle: Lifecycle) : RecyclerView.Adapter<AutomobileRecyclerAdapter.AutomobileViewHolder>(), LifecycleObserver {
+class AutomobileRecyclerAdapter(private val context: Context, val lifecycle: Lifecycle) : RecyclerView.Adapter<AutomobileRecyclerAdapter.AutomobileViewHolder>() {
+
     private var automobiles = ArrayList<Automobile>()
 
-    fun addAutomobile(automobile: Automobile) {
-        if (lifecycle.currentState.isAtLeast(Lifecycle.State.CREATED)) {
-            this.automobiles.add(automobile)
-            notifyDataSetChanged()
-        }
-    }
-
-    @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
-    fun doOnPause() {
-        log("onPause->adapter inside ${(context as Activity).localClassName}!!")
+    fun setAutomobiles(arrayList: ArrayList<Automobile>) {
+        this.automobiles.clear()
+        this.automobiles.addAll(arrayList)
+        notifyDataSetChanged()
     }
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, i: Int): AutomobileViewHolder {
@@ -52,7 +45,6 @@ class AutomobileRecyclerAdapter(private val context: Context, val lifecycle: Lif
 
     override fun getItemCount() = automobiles.size
 
-
     inner class AutomobileViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var textMaker: TextView
         var textModel: TextView
@@ -60,7 +52,6 @@ class AutomobileRecyclerAdapter(private val context: Context, val lifecycle: Lif
         var deleteButton: Button
 
         init {
-
             textMaker = itemView.findViewById(R.id.maker_text)
             textModel = itemView.findViewById(R.id.model_text)
             updateButton = itemView.findViewById(R.id.update_button)
