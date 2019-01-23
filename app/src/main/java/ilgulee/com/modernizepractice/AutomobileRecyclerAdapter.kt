@@ -1,23 +1,31 @@
 package ilgulee.com.modernizepractice
 
+import android.app.Activity
+import android.arch.lifecycle.Lifecycle
+import android.arch.lifecycle.LifecycleObserver
+import android.arch.lifecycle.OnLifecycleEvent
+import android.content.Context
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.TextView
-import java.util.*
+import ilgulee.com.modernizepractice.room.AutomobileDatabase
 
-class AutomobileRecyclerAdapter : RecyclerView.Adapter<AutomobileRecyclerAdapter.AutomobileViewHolder>() {
-    private val automobiles = ArrayList<Automobile>()
+class AutomobileRecyclerAdapter(private val context: Context, val lifecycle: Lifecycle) : RecyclerView.Adapter<AutomobileRecyclerAdapter.AutomobileViewHolder>(), LifecycleObserver {
+    private var automobiles = ArrayList<Automobile>()
 
     fun addAutomobile(automobile: Automobile) {
-        this.automobiles.add(automobile)
-        notifyDataSetChanged()
+        if (lifecycle.currentState.isAtLeast(Lifecycle.State.CREATED)) {
+            this.automobiles.add(automobile)
+            notifyDataSetChanged()
+        }
     }
 
-    fun updateData(automobiles: List<Automobile>) {
-        this.automobiles.addAll(automobiles)
-        notifyDataSetChanged()
+    @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
+    fun doOnPause() {
+        log("onPause->adapter inside ${(context as Activity).localClassName}!!")
     }
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, i: Int): AutomobileViewHolder {
@@ -31,6 +39,15 @@ class AutomobileRecyclerAdapter : RecyclerView.Adapter<AutomobileRecyclerAdapter
         val automobile = automobiles[i]
         automobileViewHolder.textMaker.text = automobile.maker
         automobileViewHolder.textModel.text = automobile.model
+        automobileViewHolder.deleteButton.setOnClickListener {
+            Thread {
+                AutomobileDatabase.getDatabase(context)!!.automobileDao().deleteAuto(automobile)
+                (context as Activity).runOnUiThread {
+                    automobiles.remove(automobile)
+                    notifyDataSetChanged()
+                }
+            }.start()
+        }
     }
 
     override fun getItemCount() = automobiles.size
@@ -39,10 +56,16 @@ class AutomobileRecyclerAdapter : RecyclerView.Adapter<AutomobileRecyclerAdapter
     inner class AutomobileViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var textMaker: TextView
         var textModel: TextView
+        var updateButton: Button
+        var deleteButton: Button
 
         init {
+
             textMaker = itemView.findViewById(R.id.maker_text)
             textModel = itemView.findViewById(R.id.model_text)
+            updateButton = itemView.findViewById(R.id.update_button)
+            deleteButton = itemView.findViewById(R.id.delete_button)
         }
+
     }
 }
